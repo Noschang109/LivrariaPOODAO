@@ -5,6 +5,8 @@
  */
 package inf3m212.livrariapoo;
 
+import Services.ClienteServicos;
+import Services.ServicosFactory;
 import controller.CCliente;
 import controller.CEditora;
 import controller.CLivro;
@@ -125,7 +127,9 @@ public class INF3M212LivrariaPOO {
             idCliente = cadCliente.geraID();
             Cliente cli = new Cliente(idCliente, nomeCliente, cpf,
                     cnpj, endereco, telefone);
-            cadCliente.addCliente(cli);
+            ClienteServicos clienteS = ServicosFactory.getClienteServicos();
+            clienteS.cadCliente(cli);
+            //cadCliente.addCliente(cli);
             System.out.println("Cliente cadastrado com sucesso!");
         }
     }//fim cadastrarCliente
@@ -236,11 +240,13 @@ public class INF3M212LivrariaPOO {
     }
 
     private static void listarClientes() {
-        for (Cliente cli : cadCliente.getClientes()) {
+        ClienteServicos clienteS = ServicosFactory.getClienteServicos();
+        for (Cliente cli : clienteS.getClientes()) {
             System.out.println("---");
             System.out.println("CPF:\t" + cli.getCpf());
             System.out.println("Nome:\t" + cli.getNomeCliente());
             System.out.println("Fone:\t" + cli.getTelefone());
+            System.out.println("Endereço: \t"+ cli.getEndereco());
         }
     }
 
