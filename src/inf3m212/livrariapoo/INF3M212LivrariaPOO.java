@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package inf3m212.livrariapoo;
 
 import Services.ClienteServicos;
@@ -19,11 +15,8 @@ import model.Cliente;
 import model.Editora;
 import model.Livro;
 import model.VendaLivro;
+import Services.EditoraServicos;
 
-/**
- *
- * @author jbferraz
- */
 public class INF3M212LivrariaPOO {
 
     public static CCliente cadCliente = new CCliente();
@@ -95,7 +88,7 @@ public class INF3M212LivrariaPOO {
         String cnpj = null;
         String endereco;
         String telefone;
-
+        ClienteServicos clienteS = ServicosFactory.getClienteServicos();
         System.out.println("-- Cadastro de Cliente --");
         System.out.print("Informe o CPF: ");
         boolean cpfIs;
@@ -115,7 +108,7 @@ public class INF3M212LivrariaPOO {
                 }
             }
         } while (!cpfIs);
-        if (cadCliente.getClienteCPF(cpf) != null) {
+        if (clienteS.buscarClienteByCPF(cpf).getCpf()!=null) {
             System.out.println("Cliente já cadastrado!");
         } else {
             System.out.print("Informe o nome: ");
@@ -127,7 +120,7 @@ public class INF3M212LivrariaPOO {
             idCliente = cadCliente.geraID();
             Cliente cli = new Cliente(idCliente, nomeCliente, cpf,
                     cnpj, endereco, telefone);
-            ClienteServicos clienteS = ServicosFactory.getClienteServicos();
+            
             clienteS.cadCliente(cli);
             //cadCliente.addCliente(cli);
             System.out.println("Cliente cadastrado com sucesso!");
@@ -138,10 +131,11 @@ public class INF3M212LivrariaPOO {
         System.out.println("-- Deletar Cliente --");
         System.out.print("Informe o cpf: ");
         String cpf = leia.nextLine();
+        ClienteServicos clienteS = ServicosFactory.getClienteServicos();
         if (Validadores.isCPF(cpf)) {
-            Cliente cli = cadCliente.getClienteCPF(cpf);
+            Cliente cli = clienteS.buscarClienteByCPF(cpf);
             if (cli != null) {
-                cadCliente.removeCliente(cli);
+                clienteS.deletarCliente(cpf);
                 System.out.println("Cliente deletado com sucesso!");
             } else {
                 System.out.println("Cliente não consta na base de dados!");
@@ -151,9 +145,7 @@ public class INF3M212LivrariaPOO {
         }
     }//fim deletarCliente
 
-    /**
-     * @param args the command line arguments
-     */
+   
     public static void main(String[] args) {
         // TODO code application logic here
         cadCliente.mockClientes();
@@ -280,6 +272,9 @@ public class INF3M212LivrariaPOO {
                 if (opEditar < 1 || opEditar > 4) {
                     System.out.println("Opção inválida!");
                 }
+                ClienteServicos clienteS = ServicosFactory.getClienteServicos();
+                clienteS.atualizarCliente(cli);
+                
                 /*
                 switch (opEditar) {
                     case 1:
@@ -324,7 +319,7 @@ public class INF3M212LivrariaPOO {
         String endereco;
         String telefone;
         String gerente;
-
+        EditoraServicos vServicos = ServicosFactory.getEditoraServicos();
         System.out.println("-- Cadastrar Editora --");
         System.out.print("Informe o CNPJ da Editora: ");
         boolean cnpjis;
@@ -346,7 +341,7 @@ public class INF3M212LivrariaPOO {
 
         } while (!cnpjis);
 
-        if (cadEditora.getEditoraCNPJ(cnpj) != null) {
+        if (vServicos.buscEditora(cnpj) == null) {
             System.out.println("Editora já cadastrada!");
         } else {
             System.out.print("Informe o nome da editora: ");
@@ -358,9 +353,8 @@ public class INF3M212LivrariaPOO {
             System.out.print("Informe o nome do gerente: ");
             gerente = leia.nextLine().toUpperCase();
             idEditora = cadEditora.geraID();
-
             Editora edi = new Editora(idEditora, nmEditora, cnpj, endereco, telefone, gerente);
-            cadEditora.addEditora(edi);
+            vServicos.cadEditora(edi);
             System.out.println("Editora cadastrada com sucesso!");
         }
     }//fim do cadastrarEditora
@@ -369,8 +363,9 @@ public class INF3M212LivrariaPOO {
         System.out.println("-- Editar Editora --");
         System.out.print("Informe o CNPJ: ");
         String cnpj = leia.nextLine();
+        EditoraServicos vServicos = ServicosFactory.getEditoraServicos();
         if (Validadores.isCNPJ(cnpj)) {
-            Editora edi = cadEditora.getEditoraCNPJ(cnpj);
+            Editora edi = vServicos.buscEditora(cnpj);
             if (edi != null) {
                 System.out.println("1 - Nome:\t" + edi.getNmEditora());
                 System.out.println("2 - Endereço:\t" + edi.getEndereco());
@@ -403,6 +398,7 @@ public class INF3M212LivrariaPOO {
                     default:
                         System.out.println("Opção inválida!");
                         break;
+                       
                 }
                 System.out.println("Editora:\n" + edi.toString());
             } else {
@@ -414,8 +410,8 @@ public class INF3M212LivrariaPOO {
     }//fim do editarEditora
 
     public static void listarEditora() {
-
-        for (Editora edi : cadEditora.getEditoras()) {
+        EditoraServicos vServicos = ServicosFactory.getEditoraServicos();
+        for (Editora edi : vServicos.getEditoras()) {
             System.out.println("----");
             System.out.println("CNPJ:\t" + edi.getCnpj());
             System.out.println("Nome:\t" + edi.getNmEditora());
@@ -428,11 +424,11 @@ public class INF3M212LivrariaPOO {
         System.out.println("-- Deletar Editora --");
         System.out.print("Informe o CNPJ: ");
         String cnpj = leia.nextLine();
-
+        EditoraServicos vServicos = ServicosFactory.getEditoraServicos();
         if (Validadores.isCNPJ(cnpj)) {
-            Editora edi = cadEditora.getEditoraCNPJ(cnpj);
+            Editora edi = vServicos.buscEditora(cnpj);
             if (edi != null) {
-                cadEditora.removeEditora(edi);
+                vServicos.deletarEditora(cnpj);
                 System.out.println("Editora deletada com sucesso!");
             } else {
                 System.out.println("Editora não consta na base de dados!");
