@@ -36,7 +36,7 @@ public class LivroServicos {
         livroDAO.deletarLivroDAO(isbn);
     }
     
-    public void atualziarLivro(Livro livroVO){
+    public void atualizarLivro(Livro livroVO){
         LivroDAO livroDAO = DAOFactory.getLivroDAO();
         livroDAO.atualizarLivroDAO(livroVO);
     }

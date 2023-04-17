@@ -5,6 +5,8 @@
  */
 package services;
 
+import model.VendaLivro;
+import dao.VendaLivrosDAO;
 /**
  *
  * @author jbferraz
@@ -13,7 +15,7 @@ public class ServicosFactory {
     private static ClienteServicos cServicos = new ClienteServicos();
     private static EditoraServicos eServicos = new EditoraServicos();
     private static LivroServicos livroS = new LivroServicos();
-    
+    private static VendaLivrosServicos vLServicos = new VendaLivrosServicos();
     public static ClienteServicos getClienteServicos(){
         return cServicos;
     }
@@ -24,4 +26,10 @@ public class ServicosFactory {
     public static LivroServicos getLivroServicos(){
         return livroS;
     }
+
+   public static VendaLivrosServicos getLivrosServicos(){
+       return vLServicos;
+               
+   }
+   
 }
